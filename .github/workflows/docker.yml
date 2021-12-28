@@ -1,0 +1,22 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - master
+
+env:
+  DOCKER_LOGIN_NAME: ${{ secrets.DOCKER_LOGIN_NAME }}
+  DOCKER_LOGIN_PASS: ${{ secrets.DOCKER_LOGIN_PASS }}
+  DOCKER_HUB: "dockerhub.qingcloud.com"
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v2
+      - name: login qingcloud docker hub
+        run: echo "${{ env.DOCKER_LOGIN_PASS }}" | docker login "${{ env.DOCKER_HUB }}" -u "${{ env.DOCKER_LOGIN_NAME }}" --password-stdin
+      - name: build and push
+        run: /bin/bash build.sh
